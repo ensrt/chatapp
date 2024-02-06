@@ -1,9 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:kartoyun/auth_pages/login_page.dart';
 import 'package:kartoyun/auth_pages/register_page.dart';
+import 'package:kartoyun/card_pages/play_card.dart';
 import 'package:kartoyun/home_page.dart';
-import 'package:kartoyun/kart_pages/kart_oyna.dart';
 import 'package:kartoyun/profil_pages/profil.dart';
 
 void main() async {
@@ -13,18 +14,41 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print("onMessage: $message");
+      // İsterseniz burada bildirimi işleyebilirsiniz
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print("onMessageOpenedApp: $message");
+      // Bildirime tıklandığında yapılacak işlemleri burada yapabilirsiniz
+      if (message.data['click_action'] == 'FLUTTER_NOTIFICATION_CLICK') {
+        Navigator.of(context).pushNamed('/your_target_route');
+      }
+    });
+
+    FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
+      if (message != null) {
+        print("getInitialMessage: $message");
+        // Bildirime tıklandığında yapılacak işlemleri burada yapabilirsiniz
+        if (message.data['click_action'] == 'FLUTTER_NOTIFICATION_CLICK') {
+          Navigator.of(context).pushNamed('/your_target_route');
+        }
+      }
+    });
+
     return MaterialApp(
       title: 'My App',
-      initialRoute: 'login_page', // Başlangıç rotası
+      initialRoute: 'login_page',
       routes: {
-        'home_page': (context) => HomePage(),  // Ana Sayfa
-        'kart_oyna': (context) => KartOynama(),  // Kart Oyna Sayfası
-        'profil': (context) => Profil(),  // Profil Sayfası
+        '/': (context) => LoginPage(), // Ana sayfaya yönlendirme
+        'home_page': (context) => HomePage(),
+        'kart_oyna': (context) => KartOynama(),
+        'profil': (context) => Profil(),
         'register_page': (context) => RegisterPage(),
         'login_page': (context) => LoginPage(),
       },

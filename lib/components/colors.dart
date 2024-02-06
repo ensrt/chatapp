@@ -12,6 +12,7 @@ class MyColors {
   static const Color kirmizi = Color(0xFFD84D4D);
   static const Color acikkirmizi = Color(0xFFfff8f8);
   static const Color arama = Color(0xFFfff9f9);
+  static const Color mesaj = Color(0xFF5f969c);
 
 
 }

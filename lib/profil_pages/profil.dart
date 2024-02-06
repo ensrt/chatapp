@@ -4,7 +4,7 @@ import 'package:kartoyun/components/colors.dart';
 import 'package:kartoyun/components/custom_background.dart';
 import 'package:kartoyun/components/custom_navbar.dart';
 import 'package:kartoyun/home_page.dart';
-import 'package:kartoyun/kart_pages/kart_oyna.dart';
+import 'package:kartoyun/card_pages/play_card.dart';
 
 class Profil extends StatefulWidget {
   const Profil({super.key});

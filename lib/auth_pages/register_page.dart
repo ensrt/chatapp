@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -5,6 +6,8 @@ import 'package:kartoyun/auth_pages/login_page.dart';
 import 'package:kartoyun/components/custom_background.dart';
 import 'package:kartoyun/components/colors.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kartoyun/home_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -14,6 +17,7 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
@@ -26,12 +30,27 @@ class _RegisterPageState extends State<RegisterPage> {
       );
 
       if (userCredential.user != null) {
+        // FCM token'ını al
+        String? fcmToken = await _firebaseMessaging.getToken();
+
+        // Firestore'a kullanıcı bilgilerini ve FCM token'ını kaydet
         await _firestore.collection('Kullanicilar').doc(userCredential.user!.uid).set({
           'email': _emailController.text,
           'adsoyad': _nameController.text,
           'uid': userCredential.user!.uid,
+          'fcmToken': fcmToken,
         });
-        // Kayıt işlemi başarılı, başka bir sayfaya yönlendirme vb. yapabilirsiniz.
+
+        // Başarılı kayıt sonrasında email ve şifreyi shared preferences'a kaydetme işlemi burada yapılabilir
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString('email', _emailController.text);
+        prefs.setString('password', _passwordController.text);
+
+        // Kayıt işlemi başarılı, home sayfasına yönlendirme
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
       } else {
         print('Auth işlemi başarısız.');
       }
@@ -166,10 +185,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: 10),
+                      foregroundColor: Colors.white, padding: EdgeInsets.symmetric(vertical: 10),
                       minimumSize: Size(double.infinity, 5),
-                      primary: MyColors.yesil,
-                      onPrimary: Colors.white,
+                      backgroundColor: MyColors.yesil,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),
