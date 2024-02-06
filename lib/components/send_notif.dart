@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 Future<void> sendNotification(String fcmToken, String senderName, String message) async {
-  final String serverKey = 'AAAArRPqJWI:APA91bEQAMKQQbm5fJd4ouFij6kQ9LdRAvy5Y7yFj9RSpLFwOc6OsE11c_xgNYLjNLdF0dXbl-IPbUBjzxw7u343Lrot-TOywVNS87LHk9gpdplf4B4nl1qqCdiCDcuLKQdugElfsd4I';
+  final String serverKey = 'Your_FCM_Key';
   final String firebaseUrl = 'https://fcm.googleapis.com/fcm/send';
 
   final Map<String, dynamic> requestData = {
